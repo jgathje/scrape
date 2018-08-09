@@ -15,7 +15,7 @@ app.listen(PORT, function () {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-app.get("/api/scrape", function (req, res) {
+app.get("/scrape", function (req, res) {
     axios.get("http://m.startribune.com/").then(function (response) {
         var $ = cheerio.load(response.data);
         $(".secondary").each(function (i, element) {
@@ -73,3 +73,13 @@ app.post("/articles/:id", function (req, res) {
             res.json(err);
         });
 });
+
+app.delete("/articles/:id", function (req, res) {
+    db.Note.findOneAndRemove({ _id: req.params.id })
+        .then(function (dbArticle) {
+            res.json(dbArticle)
+        })
+        .catch(function (err) {
+            res.json(err)
+        })
+})
