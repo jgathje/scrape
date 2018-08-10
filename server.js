@@ -73,9 +73,18 @@ app.post("/articles/:id", function (req, res) {
             res.json(err);
         });
 });
-
-app.delete("/articles/:id", function (req, res) {
-    db.Note.findOneAndRemove({ _id: req.params.id })
+app.post("/note/:id", function (req, res) {
+    db.Note.findOneAndUpdate({ _id: req.params.id }, { $push: req.body }, { new: true })
+        .then(function (dbArticle) {
+            res.json(dbArticle)
+        })
+        .catch(function (err) {
+            res.json(err)
+        })
+})
+app.delete("/articles/:id/:location", function (req, res) {
+    db.Note.update({_id: req.params.id}, { $pull: { body: req.params.location } })
+        
         .then(function (dbArticle) {
             res.json(dbArticle)
         })
